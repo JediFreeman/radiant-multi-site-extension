@@ -17,6 +17,11 @@ class MultiSiteExtension < Radiant::Extension
     tab 'Settings' do |tab|
       tab.add_item 'Sites', '/admin/sites'
     end
+
+    if admin.respond_to?(:dashboard)
+      admin.dashboard.index.add :extensions, 'sites'
+    end
+
     load_default_regions
   end
 
