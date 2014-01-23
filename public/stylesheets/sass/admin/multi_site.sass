@@ -1,0 +1,80 @@
+@import "compass"
+
+=button-shadow
+  +box-shadow(#555, 1px, 2px, 3px)
+=no-button-shadow
+  +box-shadow(#555,0,0,0)
+
+#content 
+  table.index
+    tr.node
+      td
+        padding: .5em
+    .node
+      .site
+        small
+          color: #666
+          font-size: 90%
+          font-style: italic
+          font-weight: normal
+          margin-left: .5em
+        a, a:visited
+          font-size: 115%
+          font-weight: bold
+          color: black
+          text-decoration: none
+  .form-area
+    p.subtitle
+      margin: 1em 0 0 0
+    p.domain
+      float: left
+      width: 40%
+      margin: 1em 1em 0 0
+      overflow: hidden
+      label
+        display: block
+        position: relative
+    p.homepage
+      float: right
+      width: 16%
+      margin: 1em 0 0 0
+      overflow: hidden
+      label
+        display: block
+        position: relative
+    p.domain .textbox, p.homepage .textbox, p.subtitle .textbox, p.subtitle select
+      font-family: Georgia, Palatino, "Times New Romain", Times, serif
+      font-size: 140%
+
+p.formnote
+  clear: both
+  padding: 2em 0
+
+#site_actions
+  float: left
+  display: inline-block
+  color: #333
+  ul
+    padding: 0px 8px 5px 0px
+  li
+    display: inline
+    margin-right: 5px
+  span
+    padding-left: 15px
+  a
+    color: #333
+    font-size: 80%
+    padding: 10px 12px
+    text-decoration: none
+    text-shadow: 1px 1px 1px #eee
+    label, select, input
+      margin-top: 8px
+    &:hover
+      color: #0076a3
+      text-shadow: 1px 1px 1px #fff
+    &:active
+      background: #fff
+      +no-button-shadow
+      color: black
+    img
+      vertical-align: -20%

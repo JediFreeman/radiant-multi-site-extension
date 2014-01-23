@@ -4,24 +4,37 @@ class MultiSiteExtension < Radiant::Extension
   version "1.0.0"
   description %{ Enables virtual sites to be created with associated domain names.
                  Also scopes the sitemap view to any given page (or the root of an
-                 individual site). }
+                 individual site) and allows model classes to be scoped by site. }
   url "http://radiantcms.org/"
 
   def activate
     require 'multi_site/route_extensions'
     require 'multi_site/route_set_extensions'
+    
+    # likewise for ScopedValidation, which is a pre-emptive hack that shouldn't run more than once.
+    require 'multi_site/scoped_validation'
+
+    # Model extensions
+    ActiveRecord::Base.send :include, MultiSite::ScopedModel
     Page.send :include, MultiSite::PageExtensions
+
+    # Controller extensions
+    ApplicationController.send :include, MultiSite::ApplicationControllerExtensions
     SiteController.send :include, MultiSite::SiteControllerExtensions
+    Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
-    admin.pages.index.add :bottom, "site_subnav"
+    
+    admin.pages.index.add :top, "site_subnav"
+    admin.page.edit.add :main, "site_subnav", :before => "edit_header"
+    
     tab 'Settings' do |tab|
       tab.add_item 'Sites', '/admin/sites'
     end
-
+    
     if admin.respond_to?(:dashboard)
       admin.dashboard.index.add :extensions, 'sites'
     end
-
+    
     load_default_regions
   end
 
@@ -45,3 +58,5 @@ class MultiSiteExtension < Radiant::Extension
   end
 
 end
+
+class ActiveRecord::SiteNotFound < Exception; end

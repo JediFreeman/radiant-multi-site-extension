@@ -1,23 +1,25 @@
-- if @homepage and Site.count > 1
+- if Site.count > 1
+  - current_site_name = ( current_site.nil? ? "n/a" : current_site.name )
+  - current_site_id = ( params[:site_id].nil? ? ( current_site.nil? ? nil : current_site.id ) : params[:site_id].to_i )
   - content_for :page_scripts do
     :plain
       document.observe("dom:loaded", function(){
         var site_form = $("multisite-navigation");
         var site_select = $("multisite-select");
-        var site_form_action = $("multisite-submit");
-        if (!site_form || !site_select || !site_form_action) return;
-        console.log('foo');
-        site_form_action.hide();
+        var site_form_button = $("multisite-submit");
+        if (!site_form || !site_select || !site_form_button || !site_form_action) return;
+        site_form_button.hide();
         site_select.observe("change", function(e, site_form){
-          site_form.submit();
+          var selected_site_action = '/admin/pages/site/' + $F(site_select);
+          window.location = selected_site_action;
         }.bindAsEventListener(this, site_form));
       });
-
-  #actions
-    - form_tag '/admin/pages', :id => 'multisite-navigation', :method => :get do
-      %ul
-        %li
-          %a
-            %label{:for => :root} View site: 
-            = select_tag :root, options_from_collection_for_select(Site.all, :homepage_id, :name, @homepage.id), :id => 'multisite-select'
-            = submit_tag 'Go', :id => "multisite-submit"
+  - content_for :toolbar do
+    #site_actions
+      - form_tag '/admin/pages', :id => 'multisite-navigation', :method => :get do
+        %ul
+          %li
+            %a
+              %label{:for => :site_id} View site: 
+              = select_tag :site_id, options_from_collection_for_select(Site.all, :id, :name, current_site_id), :id => 'multisite-select'
+              = submit_tag 'Go', :id => "multisite-submit"

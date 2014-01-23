@@ -1,6 +1,9 @@
 module MultiSite::PagesControllerExtensions
   def self.included(base)
     base.class_eval do
+      before_filter do |c|
+        c.include_stylesheet 'admin/multi_site'
+      end
       alias_method_chain :index, :root
       alias_method_chain :continue_url, :site
       alias_method_chain :remove, :back
@@ -13,10 +16,16 @@ module MultiSite::PagesControllerExtensions
   end
 
   def index_with_root
-    root_id = params[:root] || session[:last_active_root]
-    if @homepage = Page.find_by_id(root_id)
-      @site = @homepage.root.site
-      session[:last_active_root] = @homepage.id
+    if params[:site_id] # If a root page is specified
+      @site = Site.find(params[:site_id])
+      @homepage = @site.homepage
+    elsif params[:root]
+      @parent = Page.find_by_id(params[:root])
+      @site = @parent.site
+      @homepage = @site.homepage
+    elsif current_site
+      @site = current_site
+      @homepage = @site.homepage
     elsif @site = Site.first(:order => "position ASC") # If there is a site defined
       if @site.homepage
         @homepage = @site.homepage
