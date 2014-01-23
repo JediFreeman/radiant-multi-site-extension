@@ -1,0 +1,11 @@
+- @sites = Site.all
+.unit.size1of2
+  #sites.dashboard_module
+    %h2 Sites
+    - unless @sites.empty?
+      %ul
+        - @sites.each do |site|
+          %li
+            %span= link_to site.name, "/admin/pages?site_id=#{site.id.to_i}"
+    - else
+      %p There are currently no Sites.
